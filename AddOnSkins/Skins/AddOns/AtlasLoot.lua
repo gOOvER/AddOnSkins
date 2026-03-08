@@ -1,5 +1,9 @@
 local AS, L, S, R = unpack(AddOnSkins)
 
+-- GetItemInfo / GetItemQualityColor are soft-deprecated in TWW; keep locals for easy future migration
+local GetItemInfo = GetItemInfo
+local GetItemQualityColor = GetItemQualityColor
+
 function R:AtlasLoot(event, addon)
 	S:HandleFrame(AtlasLootTooltip)
 	AtlasLootTooltip:HookScript('OnShow', function(self)

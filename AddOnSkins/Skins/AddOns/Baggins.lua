@@ -1,5 +1,18 @@
 local AS, L, S, R = unpack(AddOnSkins)
 
+-- C_Container replaced GetContainerItem* in Dragonflight (10.x)
+local function GetContainerItemInfoCompat(bagID, slot)
+	if C_Container and C_Container.GetContainerItemInfo then
+		local info = C_Container.GetContainerItemInfo(bagID, slot)
+		if info then
+			return info.iconFileID, info.stackCount, info.isLocked, info.quality
+		end
+	elseif GetContainerItemInfo then
+		return GetContainerItemInfo(bagID, slot)
+	end
+end
+local GetContainerItemLink = (C_Container and C_Container.GetContainerItemLink) or GetContainerItemLink
+
 function R:Baggins()
 	local AddOnSkins_BagginsSkin = {
 		BagLeftPadding = 10,
@@ -82,7 +95,7 @@ function R:Baggins()
 	hooksecurefunc(Baggins, "UpdateItemButton", function(self, _, button, bag, slot)
 		local p = self.db.profile
 		if p.skin and p.skin == 'AddOnSkins' then
-			local texture, _, _, quality = GetContainerItemInfo(bag, slot)
+			local texture, _, _, quality = GetContainerItemInfoCompat(bag, slot)
 			local link = GetContainerItemLink(bag, slot)
 			if link then
 				local qual = select(3, GetItemInfo(link))

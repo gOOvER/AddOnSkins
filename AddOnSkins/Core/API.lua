@@ -119,7 +119,7 @@ function AS:Desaturate(frame)
 end
 
 function AS:SkinTooltip(tooltip, scale)
-	return AS:SkinTooltip(tooltip, scale)
+	return S:SkinTooltip(tooltip, scale)
 end
 
 function AS:AdjustForTheme(number, offset)

@@ -8,9 +8,11 @@ local strmatch = strmatch
 local strsub = strsub
 
 local CreateFrame = CreateFrame
-local FCF_IsValidChatFrame = FCF_IsValidChatFrame
+-- FCF_IsValidChatFrame was removed in The War Within; fall back to a basic liveness check
+local FCF_IsValidChatFrame = FCF_IsValidChatFrame or function(frame) return frame and not frame:IsForbidden() end
 local FCF_IsChatWindowIndexActive = FCF_IsChatWindowIndexActive
-local FCF_GetChatWindowInfo = FCF_GetChatWindowInfo
+-- FCF_GetChatWindowInfo is no longer available in TWW; use the base API instead
+local GetChatWindowInfo = GetChatWindowInfo
 local UIParent = UIParent
 local InCombatLockdown, UnitAffectingCombat = InCombatLockdown, UnitAffectingCombat
 local NUM_CHAT_WINDOWS = NUM_CHAT_WINDOWS
@@ -26,7 +28,8 @@ ES.Windows = { ES.Main, ES.Left, ES.Right }
 
 if not FCF_IsChatWindowIndexActive then
 	function FCF_IsChatWindowIndexActive(chatWindowIndex)
-		local shown = select(7, FCF_GetChatWindowInfo(chatWindowIndex));
+		-- Use the base GetChatWindowInfo API (the FCF_ wrapper was removed in TWW)
+		local shown = select(7, GetChatWindowInfo(chatWindowIndex));
 		if shown then
 			return true;
 		end

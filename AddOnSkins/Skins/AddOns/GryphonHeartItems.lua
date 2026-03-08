@@ -1,5 +1,8 @@
 local AS, L, S, R = unpack(AddOnSkins)
 
+-- GetItemQualityColor is soft-deprecated in TWW; keep local for easy future migration
+local GetItemQualityColor = GetItemQualityColor
+
 function R:GHI()
 	local holder = ExtraActionBarFrame:GetParent()
 	GHI_ExtraButtonFrame:SetParent(holder)

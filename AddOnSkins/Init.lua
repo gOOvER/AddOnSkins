@@ -16,6 +16,9 @@ AS.Skins = AS:NewModule('Skins', 'AceTimer-3.0', 'AceHook-3.0', 'AceEvent-3.0')
 _G.AddOnSkins, Engine[1], Engine[2], Engine[3], Engine[4], _G.AddOnSkinsDS = Engine, AS, {}, AS.Skins, {}, {}
 
 AS.Retail, AS.Classic, AS.TBC, AS.Wrath = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE, WOW_PROJECT_ID == WOW_PROJECT_CLASSIC, WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC, WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+-- Cataclysm Classic and Mists Classic constants are only available in those specific clients
+AS.Cata  = WOW_PROJECT_CATACLYSM_CLASSIC ~= nil and WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+AS.Mists = WOW_PROJECT_MISTS_CLASSIC     ~= nil and WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
 AS.Libs = {
 	AC = LibStub('AceConfig-3.0'),

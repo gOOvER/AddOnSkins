@@ -1,5 +1,9 @@
 local AS, L, S, R = unpack(AddOnSkins)
 
+-- GetItemInfo / GetItemQualityColor are soft-deprecated in TWW; keep locals for easy future migration
+local GetItemInfo = GetItemInfo
+local GetItemQualityColor = GetItemQualityColor
+
 local function SkinItemButton(obj, itemIDGetFunc)
 	S:HandleIcon(obj.Icon)
 	S:HandleFrame(obj)

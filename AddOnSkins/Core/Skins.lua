@@ -1,6 +1,6 @@
 local AS, L, S, R = unpack(AddOnSkins)
 
-local _G, _ = _G
+local _G = _G
 local tremove, unpack, next, ipairs, pairs = tremove, unpack, next, ipairs, pairs
 local abs, min, max, floor = abs, min, max, floor
 local strlower, strfind, type = strlower, strfind, type
@@ -18,6 +18,9 @@ S.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 S.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 S.TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 S.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+-- Cataclysm Classic and Mists Classic constants are only available in those specific clients
+S.Cata  = WOW_PROJECT_CATACLYSM_CLASSIC ~= nil and WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+S.Mists = WOW_PROJECT_MISTS_CLASSIC     ~= nil and WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
 S.Hider = CreateFrame('Frame')
 S.Hider:Hide()
@@ -399,7 +402,7 @@ local function StripRegion(which, object, kill, zero)
 		object:SetAlpha(0)
 	elseif which == STRIP_TEX then
 		object:SetTexture('')
-		object:SetAtlas('')
+		object:SetAtlas(nil) -- empty string is invalid in TWW; nil clears the atlas
 	elseif which == STRIP_FONT then
 		object:SetText('')
 	end
@@ -1916,7 +1919,7 @@ do
 		if not (dataFrame and dataFrame.listScroll) or not S.FollowerListUpdateDataFrames[dataFrame:GetName()] then return end
 
 		local buttons = dataFrame.listScroll.buttons
-		local offset = _G.HybridScrollFrame_GetOffset(dataFrame.listScroll)
+		local offset = _G.HybridScrollFrame_GetOffset and _G.HybridScrollFrame_GetOffset(dataFrame.listScroll) or 0
 		S:HandleFollowerListOnUpdateDataFunc(buttons, buttons and #buttons, offset, dataFrame.listScroll and #dataFrame.listScroll)
 	end
 

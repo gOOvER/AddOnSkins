@@ -4,7 +4,6 @@ if not AS:CheckAddOn('ElvUI') then return end
 local _G = _G
 
 local hooksecurefunc = hooksecurefunc
-local UIFrameFadeIn, UIFrameFadeOut = UIFrameFadeIn, UIFrameFadeOut
 local UnitAffectingCombat = UnitAffectingCombat
 
 local ES = AS.EmbedSystem
@@ -44,7 +43,8 @@ function ES:Hooks()
 	hooksecurefunc(E:GetModule('Layout'), 'ToggleChatPanels', function() ES:Check() end)
 
 	if RightChatToggleButton then
-		RightChatToggleButton:RegisterForClicks('AnyDown')
+		-- Keep AnyUp consistent with ElvUI's own registration (Layout.lua)
+		RightChatToggleButton:RegisterForClicks('AnyUp')
 		RightChatToggleButton:SetScript('OnClick', function(s, btn)
 			if btn == 'RightButton' then
 				if ES.Main:IsShown() then
@@ -55,33 +55,40 @@ function ES:Hooks()
 
 				ES.Main:SetShown(not AS:CheckOption('EmbedIsHidden'))
 			else
-				if E.db[s.parent:GetName()..'Faded'] then
-					E.db[s.parent:GetName()..'Faded'] = nil
-					UIFrameFadeIn(s.parent, 0.2, s.parent:GetAlpha(), 1)
-					UIFrameFadeIn(s, 0.2, s:GetAlpha(), 1)
+				local panel = s.parent
+				local panelName = panel:GetName()..'Faded'
+				if E.db[panelName] then
+					E.db[panelName] = nil
+					-- E:UIFrameFadeOut preserves panel.FadeObject (incl. finishedFunc = FinishFade)
+					-- so the panel shows/hides correctly via ElvUI's own animation system
+					panel:Show()
+					E:UIFrameFadeOut(panel, 0.2, panel:GetAlpha(), 1)
+					E:UIFrameFadeOut(s, 0.2, s:GetAlpha(), 1)
 					if not AS:CheckOption('EmbedIsHidden') then
 						ES.Main:Show()
 					end
 				else
-					E.db[s.parent:GetName()..'Faded'] = true
-					UIFrameFadeOut(s.parent, 0.2, s.parent:GetAlpha(), 0)
-					UIFrameFadeOut(s, 0.2, s:GetAlpha(), 0)
-					s.parent.fadeInfo.finishedFunc = s.parent.fadeFunc
+					E.db[panelName] = true
+					-- FinishFade (in panel.FadeObject) hides the panel when alpha reaches 0
+					E:UIFrameFadeOut(panel, 0.2, panel:GetAlpha(), 0)
+					E:UIFrameFadeOut(s, 0.2, s:GetAlpha(), 0)
 				end
 			end
 		end)
 
 		RightChatToggleButton:SetScript('OnEnter', function(s)
-			if E.db[s.parent:GetName()..'Faded'] then
-				s.parent:Show()
-				UIFrameFadeIn(s.parent, 0.2, s.parent:GetAlpha(), 1)
-				UIFrameFadeIn(s, 0.2, s:GetAlpha(), 1)
+			local panel = s.parent
+			if E.db[panel:GetName()..'Faded'] then
+				panel:Show()
+				E:UIFrameFadeOut(panel, 0.2, panel:GetAlpha(), 1)
+				E:UIFrameFadeOut(s, 0.2, s:GetAlpha(), 1)
 				if not AS:CheckOption('EmbedIsHidden') then
 					ES.Main:Show()
 				end
 			end
 
-			if not s.parent.editboxforced then
+			-- Use IsForbidden() instead of the removed editboxforced property
+			if not _G.GameTooltip:IsForbidden() then
 				_G.GameTooltip:SetOwner(s, 'ANCHOR_TOPLEFT', 0, 4)
 				_G.GameTooltip:ClearLines()
 				_G.GameTooltip:AddDoubleLine(L["Left Click:"], L["Toggle Chat Frame"], 1, 1, 1)

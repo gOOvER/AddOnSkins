@@ -6,7 +6,7 @@ local AddOnName = ...
 local ES = AS.EmbedSystem
 
 local _G = _G
-local pairs, ipairs, type, pcall, tinsert = pairs, ipairs, type, pcall, tinsert
+local pairs, ipairs, type, pcall, tinsert, tconcat = pairs, ipairs, type, pcall, tinsert, table.concat
 local floor, print, format, strlower, strmatch, strlen = floor, print, format, strlower, strmatch, strlen
 
 local geterrorhandler = geterrorhandler
@@ -249,7 +249,7 @@ function AS:StartUp(event, ...)
 	end
 
 	if not AS.Debug and AS.FoundError then
-		AS:Print(format(L["%s: There was an error in the following skin(s): %s"], AS.Version, table.concat(AS.SkinErrors, ", ")))
+			AS:Print(format(L["%s: There was an error in the following skin(s): %s"], AS.Version, tconcat(AS.SkinErrors, ", ")))
 		AS:Print(format(L["Please report this to Azilroka immediately @ %s"], AS:PrintURL(AS.TicketTracker)))
 	end
 
